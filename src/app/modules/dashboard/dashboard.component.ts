@@ -48,10 +48,14 @@ export class DashboardComponent implements OnInit {
 
   bigChart = [];
   cards = [];
-  pieChart = [];
+  public pieChart = [];
 
+  products: any = [];
+
+  public barChart = [];
+  chartData: any = [];
   //test: dashboard[]=[];
-  public test: dashboard;
+  public test: dashboard[] = [];
   errorMessage: any;
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
@@ -59,27 +63,42 @@ export class DashboardComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(private dashboardService: DashboardService) { }
+  productData = { source: 1000000 };
+
 
   ngOnInit() {
+    debugger;
     this.bigChart = this.dashboardService.bigChart();
     this.cards = this.dashboardService.cards();
     this.pieChart = this.dashboardService.pieChart();
-
     this.dataSource.paginator = this.paginator;
-    debugger;
 
-    //this.dashboardService.GetList()
-    //  .subscribe(data => { this.test = data },
-    //  error => this.errorMessage = error);
-    //console.log(this.test);
-    
-     this.dashboardService.GetList()
-      .subscribe(data => { this.test = data; console.log("Test:  "); console.log(this.test) },
-        error => {
-          console.log("Error: " + error)
-        });
-    console.log("data:");
-    console.log("data:" + this.test);
+    this.getChart();
+
+    //this.dashboardService.getDashboardData(this.productData).subscribe((data: {}) => {
+    //  this.products = data;
+    //  this.update();
+    //});
   }
 
+  getChart() {
+    //let chartData = [];
+
+    this.dashboardService.getDashboardData(this.productData).subscribe((data: {}) => {
+      this.products = data;
+
+      for (var i = 0; i < this.products.totalTaskBarChartData.length; i++) {
+        this.chartData.push({
+          name: this.products.totalTaskBarChartData[i].label,
+          y: (+this.products.totalTaskBarChartData[i].value)
+        })
+      }
+      console.log(this.chartData); // data available
+      this.barChart = this.chartData;
+
+
+
+    });
+    console.log(this.chartData); //undefined
+  }
 }

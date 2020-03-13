@@ -1,18 +1,15 @@
-
 export interface dashboard {
+  headerInfo: headerInfo;
+  totalQuotesBarChartData: chartData[];
+  totalTaskBarChartData: chartData[];
+}
+export interface headerInfo {
+  totalQuotes: number;
   activeQuotes: number;
   totalTasks: number;
-  totalQuotes: number;
-  totalQuotesBarChartData: chartData[];
-  plgApprovedQuotesPieChartData: chartData[];
-  totalTaskBarChartData: chartData[];
-  plgApprovedTasksPieChartData: chartData[];
+  errorQuotes: number;
 }
-
-
-
 export interface chartData {
-  key: string|null;
   label: string;
   value: string;
 }

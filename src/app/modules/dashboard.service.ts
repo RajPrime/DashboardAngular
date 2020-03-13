@@ -1,21 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { dashboard } from '../../app/DashboardInterfaces';
-import { Observable } from 'rxjs/Observable';
+import { Observable, of } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 import { debug } from 'util';
-import { map } from 'rxjs/operators';
-import 'rxjs/add/operator/map';
 
 //const httpOptions = {
 //  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 //};
 
+const endpoint = 'http://uschizwsbo4001.corporate.ingrammicro.com/AutoQuoteDashboardAPI/api/dashboards/GetDashboardSetting';
+const httpOptions1 = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json'
+  })
+};
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class DashboardService {
 
-  private _url: string = "http://uschizwsbo4001.corporate.ingrammicro.com/AutoQuoteDashboardAPI/api/dashboards/GetDashboardSetting";
+  private _url: string = endpoint;
+
   constructor(private http: HttpClient) { }
 
   bigChart() {
@@ -74,6 +82,80 @@ export class DashboardService {
     }];
   }
 
+  barChart() {
+    return [
+      { "name": "AUG 2019", "y": 500 }, { "name": "SEP 2019", "y": 19 }, { "name": "OCT 2019", "y": 59 }, { "name": "NOV 2019", "y": 49 }, { "name": "DEC 2019", "y": 21 }, { "name": "JAN 2020", "y": 26 }, { "name": "FEB 2020", "y": 42 }, { "name": "MAR 2020", "y": 9 }
+      ]
+    //return [
+    //  {
+    //    name: "Chrome",
+    //    y: 62.74,
+    //    drilldown: "Chrome"
+    //  },
+    //  {
+    //    name: "Firefox",
+    //    y: 10.57,
+    //    drilldown: "Firefox"
+    //  },
+    //  {
+    //    name: "Internet Explorer",
+    //    y: 7.23,
+    //    drilldown: "Internet Explorer"
+    //  },
+    //  {
+    //    name: "Safari",
+    //    y: 5.58,
+    //    drilldown: "Safari"
+    //  },
+    //  {
+    //    name: "Edge",
+    //    y: 4.02,
+    //    drilldown: "Edge"
+    //  },
+    //  {
+    //    name: "Opera",
+    //    y: 1.92,
+    //    drilldown: "Opera"
+    //  },
+    //  {
+    //    name: "Other",
+    //    y: 7.62,
+    //    drilldown: null
+    //  }
+    //]
+  }
+
+  private extractData(res: Response) {
+    let body = res;
+    return body || {};
+  }
+
+  //GetList(product): Observable<any> {
+  //  return this.http.post<any>(this._url, product, { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }).pipe(catchError(this.handleError));
+  //}
+  getDashboardData(product): Observable<any> {
+    console.log(product);
+    debugger;
+    return this.http.post<any>(endpoint, JSON.stringify(product), httpOptions1).pipe(
+      tap((product) => product),
+      catchError(this.handleError<any>('addProduct'))
+    );
+  }
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+
+      // TODO: send the error to remote logging infrastructure
+      console.error(error); // log to console instead
+
+      // TODO: better job of transforming error for user consumption
+      console.log(`${operation} failed: ${error.message}`);
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
+
   //GetList(): Observable<dashboard> {
   //  debugger;
   //  console.log(this.http.get<dashboard>(this._url));
@@ -89,19 +171,18 @@ export class DashboardService {
   //  return promise;
   //}
 
-  GetList():
-    Observable<dashboard> {
-    debugger;
-    //console.log(this.http.get<dashboard[]>(this._url));
-    //return this.http.get<dashboard[]>(this._url);
-    return this.http.get<dashboard>(this._url)
+  //GetList():    Observable<dashboard[]> {
+  //  debugger;
+  //  //console.log(this.http.get<dashboard[]>(this._url));
+  //  //return this.http.get<dashboard[]>(this._url);
+  //  return this.http.post<dashboard[]>(this._url,)
 
-     
 
-      //.map((res: Response) => res.json())
-      //.catch((error: any) => Observable.throw(error.json().error || 'Server error'));
-  }
- 
-  
+
+  //    //.map((res: Response) => res.json())
+  //    //.catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+  //}
+
+
 }
 
